@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Student Dashboard</title>
+    <style>
+        :root {
+            --sidebar-width: 200px;
+            --primary-blue: #2563eb;
+            --bg-gray: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #65728f;
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: calc(100% - 20px);
+            font-size: 1rem;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+
+        /* --- Main Content --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none; /* Hidden by default */
+        }
+
+        .content-section.active {
+            display: block; /* Show active section */
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+        }
+
+        /* --- UI Components --- */
+        .card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-clickable {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card-clickable:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th, .table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table th { color: var(--text-light); font-weight: 600; }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            background: var(--primary-blue);
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-done { background: #dcfce7; color: #166534; }
+
+    </style>
+</head>
+
+<body>
+
+    <nav class="sidebar">
+        <h2 style="color: var(--white); margin-bottom: 2rem;">KLE Portal</h2>
+        <button class="nav-link active" onclick="showTab('dashboard', this)">🏠 Dashboard</button>
+        <button class="nav-link" onclick="showTab('courses', this)">📚 My Courses</button>
+        <button class="nav-link" onclick="showTab('assignments', this)">✍️ Assignments</button>
+        <button class="nav-link" onclick="showTab('performance', this)">📊 Performance</button>
+        <button class="nav-link" style="margin-top: auto; color: #f87171;">Logout</button>
+    </nav>
+
+    <main class="main-content">
+        
+        <div id="dashboard" class="content-section active">
+            <h1>Welcome, Monish</h1>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
+                <div class="card">
+                    <span style="color: var(--text-light)">Overall GPA</span>
+                    <h2 style="margin: 5px 0;">6.71</h2>
+                </div>
+                <div class="card">
+                    <span style="color: var(--text-light)">Attendance</span>
+                    <h2 style="margin: 5px 0;">86%</h2>
+                </div>
+                <div class="card">
+                    <span style="color: var(--text-light)">Upcoming Exams</span>
+                    <h2 style="margin: 5px 0;">1</h2>
+                </div>
+            </div>
+        </div>
+
+        <div id="courses" class="content-section">
+            <h1>My Enrolled Courses</h1>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                <div class="card card-clickable" onclick="showCourseDetails('Software Engineering', 'Prof. Madalambica', '75%', 'Monday, Wednesday 10:00 AM', 'Room 402', '1. Library Management System<br>2. ATM Simulator', '1. SE Foundation Cert<br>2. Agile Methodology Cert')">
+                    <h3>Software Engineering</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light)">Instructor: Prof. Madalambica</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+                    <p style="font-size: 0.8rem; margin-top: 10px;">75% Complete</p>
+                </div>
+                <div class="card card-clickable" onclick="showCourseDetails('Data Mining', 'Prof. Pradeep', '40%', 'Tuesday, Thursday 02:00 PM', 'Lab 01', '1. Market Basket Analysis', 'Pending')">
+                    <h3>Data Mining</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light)">Instructor: Prof. Pradeep</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                    <p style="font-size: 0.8rem; margin-top: 10px;">40% Complete</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="assignments" class="content-section">
+            <h1>Assignments</h1>
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Course</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Array Logic Implementation</td>
+                            <td>C Programming</td>
+                            <td>Oct 12, 2026</td>
+                            <td><span class="badge badge-pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>HTML Portfolio Website</td>
+                            <td>Web Design</td>
+                            <td>Oct 05, 2026</td>
+                            <td><span class="badge badge-done">Submitted</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="performance" class="content-section">
+            <h1>Academic Performance</h1>
+            
+            <div class="card">
+                <h3>Semester Results</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Internal (40)</th>
+                            <th>External (60)</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Java Development</td>
+                            <td>38</td>
+                            <td>55</td>
+                            <td style="color: var(--success); font-weight: bold;">A+</td>
+                        </tr>
+                        <tr>
+                            <td>Data Structures</td>
+                            <td>35</td>
+                            <td>52</td>
+                            <td style="color: var(--success); font-weight: bold;">A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="courseModal" class="modal" onclick="this.style.display='none'">
+        <div class="card modal-content" onclick="event.stopPropagation()">
+            <h2 id="modalTitle">Course Details</h2>
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
+            <p><strong>Instructor:</strong> <span id="modalInstructor"></span></p>
+            <p><strong>Schedule:</strong> <span id="modalSchedule"></span></p>
+            <p><strong>Location:</strong> <span id="modalLocation"></span></p>
+            <p><strong>Current Progress:</strong> <span id="modalProgress"></span></p>
+            <p><strong>Course Projects:</strong><br><span id="modalProjects"></span></p>
+            <p><strong>Certificates:</strong><br><span id="modalCertificates"></span></p>
+            <button class="nav-link active" style="margin-top: 1rem; width: auto;" onclick="document.getElementById('courseModal').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId, btn) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.nav-link');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show current section and activate button
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function showCourseDetails(title, instructor, progress, schedule, location, projects, certificates) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalInstructor').innerText = instructor;
+            document.getElementById('modalProgress').innerText = progress;
+            document.getElementById('modalSchedule').innerText = schedule;
+            document.getElementById('modalLocation').innerText = location;
+            document.getElementById('modalProjects').innerHTML = projects;
+            document.getElementById('modalCertificates').innerHTML = certificates;
+            document.getElementById('courseModal').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
